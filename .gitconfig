@@ -1,7 +1,0 @@
-[user]
-	name = yuxiangliao
-	email = 330108952@qq.com
-[credential]
-	helper = store
-[http]
-	postBuffer = 24288000
