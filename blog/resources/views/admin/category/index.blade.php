@@ -15,7 +15,7 @@
                 <tr>
                     <th width="120">选择分类:</th>
                     <td>
-                        <select onchange="javascript:location.href=this.value;">
+                        <select onchange="javascript:location.href=this.value">
                             <option value="">全部</option>
                             <option value="http://www.baidu.com">百度</option>
                             <option value="http://www.sina.com">新浪</option>
@@ -57,7 +57,7 @@
                     </tr>
                     @foreach($data as $item)
                     <tr>
-                        <td class="tc"><input type="text" name="ord[]" value="{{$item['cate_order']}}"></td>
+                        <td class="tc"><input type="text" name="ord[]" onchange='changeOrder(this,{{$item->cate_id}})' value="{{$item['cate_order']}}"></td>
                         <td class="tc">
                             {{$item['cate_id']}}
                         </td>
@@ -67,45 +67,59 @@
                         <td>{{$item['cate_title']}}</td>
                         <td>{{$item['cate_view']}}</td>
                         <td>
-                            <a href="#">修改</a>
-                            <a href="#">删除</a>
+                            <a href="{{url('admin/category/'.$item->cate_id.'/edit')}}">修改</a>
+                            <a href="javascript:;" onclick="deCate({{$item->cate_id}})">删除</a>
                         </td>
                     </tr>
                     @endforeach
                 </table>
 
-
-<div class="page_nav">
-<div>
-<a class="first" href="/wysls/index.php/Admin/Tag/index/p/1.html">第一页</a> 
-<a class="prev" href="/wysls/index.php/Admin/Tag/index/p/7.html">上一页</a> 
-<a class="num" href="/wysls/index.php/Admin/Tag/index/p/6.html">6</a>
-<a class="num" href="/wysls/index.php/Admin/Tag/index/p/7.html">7</a>
-<span class="current">8</span>
-<a class="num" href="/wysls/index.php/Admin/Tag/index/p/9.html">9</a>
-<a class="num" href="/wysls/index.php/Admin/Tag/index/p/10.html">10</a> 
-<a class="next" href="/wysls/index.php/Admin/Tag/index/p/9.html">下一页</a> 
-<a class="end" href="/wysls/index.php/Admin/Tag/index/p/11.html">最后一页</a> 
-<span class="rows">11 条记录</span>
-</div>
-</div>
-
-
-
-                <div class="page_list">
-                    <ul>
-                        <li class="disabled"><a href="#">&laquo;</a></li>
-                        <li class="active"><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                        <li><a href="#">5</a></li>
-                        <li><a href="#">&raquo;</a></li>
-                    </ul>
-                </div>
             </div>
         </div>
     </form>
     <!--搜索结果页面 列表 结束-->
+    <script>
+        function changeOrder(obj,cate_id){
+            var cate_order = $(obj).val();
+            $.post("{{url('admin/category/changeorder')}}",{'_token':'{{csrf_token()}}','cate_id':cate_id,'cate_order':cate_order},function(data){
+                if(data.status == 0){
+                    layer.msg(data.msg, {icon: 6});
+                }else{
+                    layer.msg(data.msg, {icon: 5});
+                }
+            })
+        }
+        $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+        function deCate(cate_id) {
+
+            var url = "{{url('admin/category/')}}/"+cate_id;
+            layer.confirm('您确定要删除这个分类吗？', {
+                btn: ['确定','取消'] //按钮
+            }, function() {
+                $.ajax({
+                    url:url,
+                    type:"delete",
+                    contentType:"application/json",
+                    dataType:"json",
+                    data:{},
+                    timeout:60000,
+                    success:function(data){
+                            if(data.status==0){
+                                location.href = location.href;
+                                layer.msg(data.msg, {icon: 6});
+                            }else{
+                                layer.msg(data.msg, {icon: 5});
+                            }
+                    },
+                    error:function(xhr,textstatus,thrown){
+    alert("error");
+                    }
+                })
+            },function(){
+
+            });
+
+        }
+    </script>
 
 @endsection

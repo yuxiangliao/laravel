@@ -6,6 +6,7 @@ use App\Http\Models\Dictionary;
 use App\Http\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\TranslateSlug;
 
 class UserController extends Controller
 {
@@ -34,7 +35,8 @@ class UserController extends Controller
         dd($dictionary);
     }
 
-    public function show($id){
+    public function show($id='LIAO'){
+
         return view('user.profile',['username'=>$id]);
     }
 
@@ -53,9 +55,15 @@ class UserController extends Controller
     public function testCookie(Request $request){
         $value = $request->cookie('name');
         return response('欢迎来到 Laravel 学院')->cookie(
-            'name', '学院君', $minutes
+            'name', '学院君'
         );
     }
 
+    public function testQueue(Request $request,$topic){
 
+        //User::where('Code','0000H')->update(['Description'=>'liyuzhen']);
+        //TranslateSlug::dispatch($topic);
+        $this->dispatch(new TranslateSlug($topic));
+        return response($topic);
+    }
 }

@@ -15,7 +15,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('user/{id}','UserController@show');
+Route::get('/test/{id}',function ($id='LIAO'){
+   return "user id :".$id;
+})->where('id','[\S]*');
+Route::get('/user/{id?}/','UserController@show')->where('id','[A-Za-z]*');
 
 Route::get('user/action/{action}','UserController@action')->where('action','[A-Za-z]+');
 
@@ -28,7 +31,6 @@ Route::get('cookie/add', function () {
 //打印cookie
 Route::get('cookie/get', function(\Illuminate\Http\Request $request) {
     $cookie = $request->cookie('name');
-    dd($cookie);
 });
 
 Route::get('greeting', function () {
@@ -47,6 +49,7 @@ Route::group(['middleware'=>['admin.login'],'prefix'=>'admin','namespace'=>'Admi
     Route::any('pass', 'IndexController@pass');
 
     Route::resource('category','CategoryController');
+    Route::post('category/changeorder', 'CategoryController@changeOrder');
 });
 
 
@@ -57,3 +60,5 @@ Route::get('/layouts',function (){
 Route::get('/view','UserController@view');
 
 Route::get('/dic','UserController@dic');
+
+Route::get('/translate/{topic}','UserController@testQueue');

@@ -13,6 +13,8 @@ class Category extends Model
 
     public $timestamps = false;
 
+    protected $guarded=[];
+
     public function tree()
     {
         $categorys = $this->all();
